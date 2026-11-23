@@ -60,6 +60,12 @@ class EchoNotificationProvider(
       notification.flags = notification.flags and Notification.FLAG_ONGOING_EVENT.inv()
     }
 
+    notification.extras.putBoolean("android.requestPromotedOngoing", shouldBeOngoing)
+if (shouldBeOngoing) {
+  notification.extras.putCharSequence("android.shortCriticalText", "Playing")
+} else {
+  notification.extras.remove("android.shortCriticalText")
+}
     return MediaNotification(mediaNotification.notificationId, notification)
   }
 
