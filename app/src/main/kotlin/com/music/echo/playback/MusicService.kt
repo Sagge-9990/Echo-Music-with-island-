@@ -3005,6 +3005,8 @@ class MusicService : MediaLibraryService(), Player.Listener, PlaybackStatsListen
   fun toggleLike() {
     scope.launch { toggleLike(currentSong.first()) }
   }
+  
+  fun isCurrentSongLiked(): Boolean = currentSong.value?.song?.liked == true
 
   /** Likes or unlikes [songId], e.g. from an Android Auto browse action. */
   fun toggleLike(songId: String) {
