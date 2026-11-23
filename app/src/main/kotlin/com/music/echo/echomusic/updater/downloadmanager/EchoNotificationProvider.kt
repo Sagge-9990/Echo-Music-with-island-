@@ -28,6 +28,8 @@ class EchoNotificationProvider(
       channelNameResourceId
     )
 
+  private val liveUpdate = PlaybackLiveUpdate(context)
+
   fun setSmallIcon(iconResId: Int): EchoNotificationProvider {
     defaultProvider.setSmallIcon(iconResId)
     return this
@@ -53,6 +55,8 @@ class EchoNotificationProvider(
         player.playbackState != Player.STATE_IDLE &&
         player.playbackState != Player.STATE_ENDED
 
+    liveUpdate.sync(player)
+
     val notification = mediaNotification.notification
     if (shouldBeOngoing) {
       notification.flags = notification.flags or Notification.FLAG_ONGOING_EVENT
@@ -60,12 +64,14 @@ class EchoNotificationProvider(
       notification.flags = notification.flags and Notification.FLAG_ONGOING_EVENT.inv()
     }
 
+    // Ask Android 16 / Origin Island to show playback as a Live Update while playing.
     notification.extras.putBoolean("android.requestPromotedOngoing", shouldBeOngoing)
-if (shouldBeOngoing) {
-  notification.extras.putCharSequence("android.shortCriticalText", "Playing")
-} else {
-  notification.extras.remove("android.shortCriticalText")
-}
+    if (shouldBeOngoing) {
+      notification.extras.putCharSequence("android.shortCriticalText", "Playing")
+    } else {
+      notification.extras.remove("android.shortCriticalText")
+    }
+
     return MediaNotification(mediaNotification.notificationId, notification)
   }
 
